@@ -1,6 +1,7 @@
 {
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude)backend'",
-  "buildCommand": "next build",
+  "framework": "nextjs",
+  "buildCommand": "pnpm run build",
   "outputDirectory": ".next",
-  "installCommand": "pnpm install --ignore-scripts"
+  "installCommand": "pnpm install",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':(exclude)backend'"
 }

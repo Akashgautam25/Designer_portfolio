@@ -23,42 +23,66 @@ export function MagneticButton({
   onClick,
   disabled = false,
 }: MagneticButtonProps) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement>(null)
   const [position, setPosition] = useState({ x: 0, y: 0 })
 
-  const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (disabled) return
-    
+  const handleMouse = (e: React.MouseEvent) => {
+    if (disabled || !ref.current) return
     const { clientX, clientY } = e
-    const { left, top, width, height } = ref.current!.getBoundingClientRect()
-    const x = (clientX - left - width / 2) * strength
-    const y = (clientY - top - height / 2) * strength
-    setPosition({ x, y })
+    const { left, top, width, height } = ref.current.getBoundingClientRect()
+    setPosition({
+      x: (clientX - left - width / 2) * strength,
+      y: (clientY - top - height / 2) * strength,
+    })
   }
 
-  const reset = () => {
-    setPosition({ x: 0, y: 0 })
+  const reset = () => setPosition({ x: 0, y: 0 })
+
+  if (as === "a") {
+    return (
+      <motion.a
+        ref={ref as React.RefObject<HTMLAnchorElement>}
+        href={href}
+        className={cn("relative inline-flex items-center justify-center", disabled && "opacity-50 cursor-not-allowed", className)}
+        onMouseMove={handleMouse}
+        onMouseLeave={reset}
+        animate={{ x: position.x, y: position.y }}
+        transition={{ type: "spring", stiffness: 350, damping: 15 }}
+        onClick={disabled ? undefined : onClick}
+      >
+        {children}
+      </motion.a>
+    )
   }
 
-  const Component = as === "a" ? motion.a : as === "div" ? motion.div : motion.button
+  if (as === "div") {
+    return (
+      <motion.div
+        ref={ref as React.RefObject<HTMLDivElement>}
+        className={cn("relative inline-flex items-center justify-center", disabled && "opacity-50 cursor-not-allowed", className)}
+        onMouseMove={handleMouse}
+        onMouseLeave={reset}
+        animate={{ x: position.x, y: position.y }}
+        transition={{ type: "spring", stiffness: 350, damping: 15 }}
+        onClick={disabled ? undefined : onClick}
+      >
+        {children}
+      </motion.div>
+    )
+  }
 
   return (
-    <Component
-      ref={ref as React.RefObject<HTMLDivElement & HTMLButtonElement & HTMLAnchorElement>}
-      className={cn(
-        "relative inline-flex items-center justify-center",
-        disabled && "opacity-50 cursor-not-allowed",
-        className
-      )}
+    <motion.button
+      ref={ref as React.RefObject<HTMLButtonElement>}
+      className={cn("relative inline-flex items-center justify-center", disabled && "opacity-50 cursor-not-allowed", className)}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
       animate={{ x: position.x, y: position.y }}
       transition={{ type: "spring", stiffness: 350, damping: 15 }}
-      href={href}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
     >
       {children}
-    </Component>
+    </motion.button>
   )
 }
