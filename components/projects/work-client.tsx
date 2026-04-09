@@ -38,25 +38,38 @@ export function WorkClient({ projects }: { projects: Project[] }) {
 
         {/* Filter Tabs */}
         <Reveal direction="up" delay={0.3}>
-          <div className="mb-12 flex flex-wrap gap-3">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActive(cat)}
-                className="relative rounded-full px-5 py-2 text-sm font-semibold transition-colors"
-              >
-                {active === cat && (
-                  <motion.span
-                    layoutId="filter-pill"
-                    className="absolute inset-0 rounded-full bg-primary"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span className={`relative z-10 ${active === cat ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
-                  {cat}
-                </span>
-              </button>
-            ))}
+          <div className="mb-12 flex flex-wrap items-center gap-3">
+            {CATEGORIES.map((cat) => {
+              const count = cat === "All"
+                ? projects.length
+                : projects.filter((p) => p.category === cat).length
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActive(cat)}
+                  className="relative rounded-full px-5 py-2 text-sm font-semibold transition-colors"
+                >
+                  {active === cat && (
+                    <motion.span
+                      layoutId="filter-pill"
+                      className="absolute inset-0 rounded-full bg-primary"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className={`relative z-10 flex items-center gap-1.5 ${active === cat ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                    {cat}
+                    <motion.span
+                      key={`${cat}-${count}`}
+                      initial={{ scale: 0.6, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${active === cat ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
+                      {count}
+                    </motion.span>
+                  </span>
+                </button>
+              )
+            })}
           </div>
         </Reveal>
 

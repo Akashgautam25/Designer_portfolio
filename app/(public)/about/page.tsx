@@ -91,7 +91,7 @@ export default function AboutPage() {
                   alt="John Doe"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 80vw, 40vw"
+                  sizes="(max-width: 768px) 0vw, 40vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent" />
                 {/* Floating badge */}

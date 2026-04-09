@@ -81,6 +81,9 @@ export function ProjectCard({ project, index = 0, size = "default" }: ProjectCar
           onMouseLeave={handleMouseLeave}
           data-cursor
           data-cursor-text="View"
+          onMouseLeave={handleMouseLeave}
+          data-cursor
+          data-cursor-text="View"
         >
           {/* Image */}
           <div className="absolute inset-0">

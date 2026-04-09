@@ -73,19 +73,29 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center gap-10 md:flex">
-            {navLinks.map((link) => (
-              <MagneticButton key={link.href} as="div" strength={0.2}>
-                <Link
-                  href={link.href}
-                  className={cn(
-                    "relative text-sm font-bold tracking-widest uppercase transition-colors hover:text-primary",
-                    pathname === link.href ? "text-primary border-b-2 border-primary pb-1" : "text-muted-foreground"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              </MagneticButton>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href
+              return (
+                <MagneticButton key={link.href} as="div" strength={0.2}>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "relative text-sm font-bold tracking-widest uppercase transition-colors hover:text-primary",
+                      isActive ? "text-primary" : "text-muted-foreground"
+                    )}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-underline"
+                        className="absolute -bottom-1 left-0 right-0 h-[2px] rounded-full bg-primary"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                </MagneticButton>
+              )
+            })}
           </nav>
 
           {/* Auth & Mobile Toggle */}

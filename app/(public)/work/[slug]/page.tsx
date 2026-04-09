@@ -1,5 +1,4 @@
 import { Metadata } from "next"
-import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight } from "lucide-react"
@@ -7,6 +6,7 @@ import { getProjectBySlug, getAdjacentProjects } from "@/lib/data"
 import { Reveal } from "@/components/animations/reveal"
 import { SplitText } from "@/components/animations/split-text"
 import { ParallaxImage } from "@/components/animations/parallax"
+import { ProjectCaseStudy } from "@/components/projects/project-case-study"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -31,8 +31,11 @@ export default async function ProjectPage({ params }: Props) {
       {/* Hero */}
       <div className="mx-auto max-w-7xl px-6">
         <Reveal direction="up">
-          <Link href="/work" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" />
+          <Link
+            href="/work"
+            className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Work
           </Link>
         </Reveal>
@@ -49,18 +52,16 @@ export default async function ProjectPage({ params }: Props) {
 
           <Reveal direction="up" delay={0.3}>
             <div className="flex flex-wrap gap-6 lg:justify-end">
-              <div>
-                <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Client</div>
-                <div className="mt-1 font-medium">{project.client_name}</div>
-              </div>
-              <div>
-                <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Year</div>
-                <div className="mt-1 font-medium">{project.year}</div>
-              </div>
-              <div>
-                <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Category</div>
-                <div className="mt-1 font-medium">{project.category}</div>
-              </div>
+              {[
+                { label: "Client",   value: project.client_name },
+                { label: "Year",     value: project.year },
+                { label: "Category", value: project.category },
+              ].map((m) => (
+                <div key={m.label}>
+                  <div className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{m.label}</div>
+                  <div className="mt-1 font-medium">{m.value}</div>
+                </div>
+              ))}
             </div>
           </Reveal>
         </div>
@@ -77,7 +78,7 @@ export default async function ProjectPage({ params }: Props) {
         </Reveal>
       </div>
 
-      {/* Featured Image */}
+      {/* Featured Image — parallax */}
       <div className="mt-16">
         <ParallaxImage
           src={project.thumbnail_url}
@@ -86,56 +87,17 @@ export default async function ProjectPage({ params }: Props) {
         />
       </div>
 
-      {/* Case Study */}
-      <div className="mx-auto mt-16 max-w-7xl px-6">
-        <div className="grid gap-12 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <Reveal direction="up">
-              <h2 className="text-2xl font-bold">About the Project</h2>
-              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{project.long_description}</p>
-            </Reveal>
-          </div>
-          <Reveal direction="up" delay={0.2}>
-            <div className="rounded-xl border border-border/50 bg-card/50 p-6">
-              <h3 className="font-semibold text-sm uppercase tracking-widest text-muted-foreground mb-4">Technologies</h3>
-              <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech) => (
-                  <span key={tech} className="rounded-md bg-secondary px-3 py-1 text-sm font-medium">
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-
-      {/* Gallery */}
-      {project.images.length > 0 && (
-        <div className="mx-auto mt-16 max-w-7xl px-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            {project.images.map((image, index) => (
-              <Reveal key={image} direction="up" delay={index * 0.1}>
-                <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-                  <Image
-                    src={image}
-                    alt={`${project.title} - Image ${index + 1}`}
-                    fill
-                    className="object-cover transition-transform duration-700 hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Case study — horizontal scroll gallery + details */}
+      <ProjectCaseStudy project={project as any} />
 
       {/* Navigation */}
       <div className="mx-auto mt-24 max-w-7xl px-6">
         <div className="flex flex-col gap-4 border-t border-border/50 pt-8 md:flex-row md:items-center md:justify-between">
           {prev ? (
-            <Link href={`/work/${prev.slug}`} className="group flex items-center gap-4 text-muted-foreground transition-colors hover:text-foreground">
+            <Link
+              href={`/work/${prev.slug}`}
+              className="group flex items-center gap-4 text-muted-foreground transition-colors hover:text-foreground"
+            >
               <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
               <div>
                 <div className="text-xs uppercase tracking-widest">Previous</div>
@@ -145,7 +107,10 @@ export default async function ProjectPage({ params }: Props) {
           ) : <div />}
 
           {next && (
-            <Link href={`/work/${next.slug}`} className="group flex items-center gap-4 text-right text-muted-foreground transition-colors hover:text-foreground md:flex-row-reverse">
+            <Link
+              href={`/work/${next.slug}`}
+              className="group flex items-center gap-4 text-right text-muted-foreground transition-colors hover:text-foreground md:flex-row-reverse"
+            >
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               <div>
                 <div className="text-xs uppercase tracking-widest">Next</div>
